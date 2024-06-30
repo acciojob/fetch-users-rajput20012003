@@ -1,57 +1,51 @@
-// src/components/App.js
-import React, { useState } from 'react';
-import axios from 'axios';
-import '../App.css';
+import React, { useEffect, useState } from "react";
+import './../styles/App.css';
 
-function App() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+const App = () => {
+  const [people, setPeople] = useState([])
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await axios.get('https://reqres.in/api/users');
-      setUsers(response.data.data);
-    } catch (err) {
-      setError('Failed to fetch users');
-    } finally {
-      setLoading(false);
-    }
-  };
+  function getData() {
+    fetch('https://reqres.in/api/users')
+      .then(data => data.json())
+      .then(data => setPeople(data.data))
+  }
 
   return (
-    <div className="App">
-      <h1>User List</h1>
-      <button className="btn" onClick={fetchUsers}>Get User List</button>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-      {users.length === 0 && !loading && <p>No users found.</p>}
-      {users.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Avatar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.id}>
-                <td>{user.first_name}</td>
-                <td>{user.last_name}</td>
-                <td>{user.email}</td>
-                <td><img src={user.avatar} alt={`${user.first_name} ${user.last_name}`} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+    <div>
+      {/* Do not remove the main div */}
+      <header className="nav">
+        <h1>Blue Whales</h1>
+        <button className="btn"  onClick={getData} >Get User List</button>
+      </header>
+      <table>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Avatar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            people.length == 0 ? "No data found to display."
+              :
+              people.map((people, i) => {
+                return (
+                  <tr key={i} >
+                    <td>{people.first_name}</td>
+                    <td>{people.last_name}</td>
+                    <td>{people.email}</td>
+                    <td><img src={people.avatar} alt="" /></td>
+                  </tr>
+                )
+              })
+
+          }
+        </tbody>
+      </table>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
